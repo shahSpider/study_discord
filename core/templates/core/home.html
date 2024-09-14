@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Home Page Content</h2>
+    <h2>Home Page Template</h2>
+    {% for rm in rooms %}
+    <ol>
+        <li value="{{rm.id}}">{{rm.name}}</li>
+    </ol>
+    {% endfor %}
 {% endblock content %}
