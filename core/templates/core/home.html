@@ -1,10 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Home Page Template</h2>
-    {% for rm in rooms %}
-    <ol>
-        <li value="{{rm.id}}">{{rm.name}}</li>
-    </ol>
-    {% endfor %}
+<style>
+    .home-container {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+    }
+</style>
+
+<div class="home-container">
+    <div>
+        <h3>Browse Topics</h3>
+        <hr>
+        <a href="{% url 'core:home' %}">All</a>
+        {% for topic in topics %}
+            <div>
+                <a href="{% url 'core:home' %}?q={{topic.name}}">{{topic.name}}</a>
+            </div>
+        {% endfor topics%}
+    </div>
+    <div>
+        <div>
+            <h5>{{room_count}} rooms available</h5>
+            <a href="{% url 'core:create-room' %}">Create Room</a><br><br>
+            {% for room in rooms %}
+                <div>
+                    <a href="{% url 'core:update-room' room.id %}">Edit</a>
+                    <a href="{% url 'core:delete-room' room.id %}">Delete</a>
+                    <br>
+                    <span>@{{room.host}}</span>
+                    <h5>{{room.id}} -- <a href="{% url 'core:room' room.id %}">{{room.name}}</a></h5>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock content %}
