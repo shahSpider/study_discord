@@ -5,3 +5,10 @@
 <form method="GET" action="{% url 'core:home' %}">
     <input type="text" name="q" placeholder="Search Rooms..."/>
 </form>
+
+{% if request.user.is_authenticated %}
+    <p>Hello {{request.user.first_name}} {{request.user.last_name}}</p>
+    <a href="{% url 'core:logout' %}">Logout</a>
+{% else %}
+    <a href="{% url 'core:login' %}">Login</a>
+{% endif %}
