@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import RoomForm
 from django.db.models import Q
 
@@ -59,12 +59,33 @@ def home(request):
         )
     room_count = rooms.count()
     topics = Topic.objects.all()
-    context = {"rooms": rooms, 'topics': topics, 'room_count': room_count}
+    room_messages = Message.objects.all()
+    context = {
+        'rooms': rooms,
+        'topics': topics,
+        'room_count': room_count,
+        'room_messages': room_messages,
+    }
     return render(request, 'core/home.html', context)
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    context = {"room": room}
+    room_chat = room.message_set.all()
+    participants = room.participants.all()
+
+    if request.method == "POST":
+        Message.objects.create(
+            user = request.user,
+            room = room,
+            body=request.POST.get("body"),
+        )
+        room.participants.add(request.user)
+        return redirect('core:room', pk=room.id)
+    context = {
+        "room": room,
+        "room_chat": room_chat,
+        "participants": participants,    
+    }
     return render(request, 'core/room.html', context)
 
 @login_required(login_url='login/')
@@ -105,3 +126,14 @@ def delete_room(request, pk):
         room.delete()
         return redirect('core:home')
     return render(request, 'core/delete.html', {'object': room})
+
+@login_required(login_url='login')
+def delete_message(request, pk):
+    message = Message.objects.get(id=int(pk))
+    if not(request.user == message.user or request.user.is_superuser):
+        return HttpResponse("You're not allowed to delete this message")
+    
+    if request.method == "POST":
+        message.delete()
+        return redirect('core:home')
+    return render(request, 'core/delete.html', {'object': message})
