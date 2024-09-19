@@ -1,33 +1,29 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Study Cord</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
-    <!-- <script src='main.js'></script> -->
-</head>
-<body>
-    <div class="navbar">
-        {% include 'navbar.html' %}
-    </div>
-    
-    
-    <div class="content" style="padding: 100px;">
-        {% block content %}
-        {% endblock content %}
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}" />
+    <title>StudyCord - Find study partners around the world!</title>
+  </head>
 
-    <div class="footer">
-        {% include 'footer.html' %}
-    </div>
-</body>
+  <body>
+
+    {% include 'navbar.html' %}
+    
+    {% block content %}
+    {% endblock content %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
 </html>
