@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Room, Topic, Message
-from .forms import RoomForm
+from .forms import RoomForm, UserForm
 from django.db.models import Q
 
 def login_view(request):
@@ -58,7 +58,7 @@ def home(request):
         Q(description__icontains=q)
         )
     room_count = rooms.count()
-    topics = Topic.objects.all()
+    topics = Topic.objects.all()[0:5]
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
     context = {
         'rooms': rooms,
@@ -97,7 +97,7 @@ def room(request, pk):
     context = {
         "room": room,
         "room_chat": room_chat,
-        "participants": participants,    
+        "participants": participants,  
     }
     return render(request, 'core/room.html', context)
 
@@ -167,5 +167,27 @@ def delete_message(request, pk):
     return render(request, 'core/delete.html', {'object': message})
 
 @login_required(login_url='login')
-def update_user(request):
-    return render(request, 'core/update-user.html')
+def edit_user(request):
+    user = request.user
+    form = UserForm(instance=user)
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('core:user-profile', pk=user.id)
+
+    context =  {
+        'form': form,
+        'user': user
+    }
+    return render(request, 'core/edit-user.html', context)
+
+
+def topics_page(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    topics = Topic.objects.filter(name__icontains=q)
+    return render(request, 'core/topics.html', {'topics': topics})
+
+def activity_page(request):
+    room_messages = Message.objects.all()
+    return render(request, 'core/activity.html', {'room_messages': room_messages})
