@@ -121,7 +121,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'images/'
+
 STATICFILES_DIRS = [ BASE_DIR / 'static']
+MEDIA_ROOT = BASE_DIR / 'static/images'
+
 # STATIC_ROOT = 
 
 # Default primary key field type
@@ -130,3 +134,4 @@ STATICFILES_DIRS = [ BASE_DIR / 'static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+AUTH_USER_MODEL = "core.User"
